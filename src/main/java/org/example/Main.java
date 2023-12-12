@@ -28,15 +28,9 @@ public class Main {
         System.out.println();
         System.out.println("TOP 5 MOVIES------");
 
-        set.stream()
-                .sorted((o1, o2) -> {
-                    if (o1.getImdb() < o2.getImdb()) {
-                        return 1;
-                    }
-                    return -1;
-                })
-                .limit(5)
+        Top5Movies.getTop5Movies().stream()
                 .forEach(m -> System.out.println("NAME: " + m.getTitle() + "  " + ",IMDB: " + m.getImdb()));
+
 
         System.out.println();
         System.out.println("TOP RATED MOVIES------");
@@ -89,7 +83,6 @@ public class Main {
         //mp.values();
 
 
-
         set.stream()
                 .map((Movie movie) -> {
                     return movie.getProduction();
@@ -97,7 +90,6 @@ public class Main {
                 .forEach((String s) -> {
                     col.put(s, 0.0);
                 });
-
 
 
         set.stream()
@@ -133,7 +125,7 @@ public class Main {
         System.out.println();
         System.out.println("MOVIES BY STAR CAST------");
 
-        List<Movie> l1=MoviesByStar.getMoviesByStar("Steve Martin");
+        List<Movie> l1 = MoviesByStar.getMoviesByStar("Steve Martin");
         System.out.println(l1);
 
 
