@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -51,10 +50,7 @@ public class Main {
 
         set.stream()
                 .filter((movie) -> {
-                    if (movie.getCategory() == "Thriller") {
-                        return true;
-                    }
-                    return false;
+                    return movie.getCategory().equals("Thriller");
                 })
                 .sorted((o1, o2) -> {
                     if (o1.getPublicRating() < o2.getPublicRating()) {
