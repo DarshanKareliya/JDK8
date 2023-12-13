@@ -1,8 +1,8 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,6 +12,8 @@ public class Main {
         MovieRepository movieRepository = new MovieRepository();
 
         List<Movie> set = movieRepository.getMovieList();
+
+
         System.out.println();
         System.out.println("TOP 5 MOVIES BY COLLECTION------");
 
@@ -74,15 +76,74 @@ public class Main {
             System.out.println(m.getCast().get(0));
         });
 
+
         System.out.println();
         System.out.println("TOP 10 PRODUCTION HOUSE------");
 
         Map<String, Double> col = new HashMap<>();
 
         Map<String, List<Movie>> mp = MoviesByProductionHouse.getMoviesByProduction();
-        //mp.values();
 
 
+        System.out.println("unsorted map of production house as key and total collection as value");
+        System.out.println(mp.entrySet()
+                .stream()
+                .map((Map.Entry<String, List<Movie>> stringListEntry) -> {
+                    Double gross = stringListEntry.getValue()
+                            .stream()
+                            .map(movie -> movie.getCollection())
+                            .reduce(0.0, (c1, d1) -> c1 + d1);
+                    String key = stringListEntry.getKey();
+                    Map.Entry<String, Double> entry = new AbstractMap.SimpleEntry<>(key, gross);
+                    return entry;
+                })
+                .sorted((Map.Entry<String, Double> o1, Map.Entry<String, Double> o2)-> {
+                    if (o1.getValue() < o2.getValue()) {
+                        return 1;
+                    }
+                    return -1;
+                })          //   if we are putting the values in the map then it does not matter if we have sorted value or not because map DOES NOT GIVE VALUES IN ORDER.
+                            //    MAP DOES NOT CARE ABOUT ORDER EXCEPT LinkedHashMap
+                .collect(Collectors.toMap((Map.Entry<String, Double> stringDoubleEntry)-> {
+                    return stringDoubleEntry.getKey();
+
+                }, (Map.Entry<String, Double> stringDoubleEntry)-> {
+                    return stringDoubleEntry.getValue();
+
+                })));
+
+
+        System.out.println();
+        System.out.println("sorted map of production house as key and total collection as value");
+        LinkedHashMap<String, Double> result = new LinkedHashMap<>();
+        mp.entrySet().stream()
+                .map((Map.Entry<String, List<Movie>> stringListEntry) -> {
+                    Double gross = stringListEntry.getValue()
+                            .stream()
+                            .map(movie -> movie.getCollection())
+                            .reduce(0.0, (c1, d1) -> c1 + d1);
+                    String key = stringListEntry.getKey();
+                    Map.Entry<String, Double> entry = new AbstractMap.SimpleEntry<>(key, gross);
+                    return entry;
+                })
+                .sorted((Map.Entry<String, Double> o1, Map.Entry<String, Double> o2)-> {
+                    if (o1.getValue() < o2.getValue()) {
+                        return 1;
+                    }
+                    return -1;
+                })
+                .collect(Collectors.toList())
+                .stream()
+                .forEach(m ->
+                {
+                    result.put(m.getKey(), m.getValue());
+                });
+
+        System.out.println(result);
+
+
+        System.out.println();
+        System.out.println("another way of creating the top production house by total collection of that production ");
         set.stream()
                 .map((Movie movie) -> {
                     return movie.getProduction();
@@ -100,9 +161,6 @@ public class Main {
                     Double newCol = old + collection;
                     col.replace(key, newCol);
                 });
-
-        // System.out.println(col);
-
 
         List<Double> vals = col.values().stream()
                 .sorted((o1, o2) -> {
